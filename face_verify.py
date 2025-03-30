@@ -22,6 +22,7 @@ barcodes = []
 display_data = []
 ocr_mode = False
 face_mode = True  # Start in face mode
+preview_running = False  # Track the state of preview
 
 # 1. Load Pre-trained SVM for face classification
 with open('svm_classifier.pkl', 'rb') as f:
@@ -95,12 +96,13 @@ def draw_overlay(request):
             cv2.putText(m.array, label, (x1, y1 - 10), font, 0.7, colour_face, 2)
 
 def main():
-    global start_time, barcodes, display_data, ocr_mode, face_mode
+    global start_time, barcodes, display_data, ocr_mode, face_mode, preview_running
     print("Starting Raspberry Pi system with Facial Recognition, Barcode, and OCR...")
 
     # Check if preview is already running, if not, start it
-    if not picam2.is_previewing():
+    if not preview_running:
         picam2.start_preview(Preview.QTGL)
+        preview_running = True
 
     picam2.post_callback = draw_overlay
     start_time = time.time()
