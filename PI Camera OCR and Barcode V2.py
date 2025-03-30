@@ -93,8 +93,11 @@ def main():
                 ocr_data = pytesseract.image_to_data(frame, output_type=pytesseract.Output.DICT)
                 extracted_data = []
                 for i in range(len(ocr_data['text'])):
-                    if ocr_data['text'][i].strip():
-                        conf = int(ocr_data['conf'][i]) if ocr_data['conf'][i].isdigit() else 0
+                    if ocr_data['text'][i].strip():  # Ensure non-empty text
+                        conf = ocr_data['conf'][i]
+                        if isinstance(conf, str) and conf.isdigit():
+                            conf = int(conf)  # Convert only if it's a valid number string
+                        
                         if conf > ocr_threshold:
                             extracted_data.append({
                                 "text": ocr_data['text'][i],
